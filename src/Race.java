@@ -19,7 +19,10 @@ public class Race {
             e.printStackTrace();
         }
 
-        while (connections.size() = ) //todo wait till full
+        while (connections.size() == AMOUNT_OF_PLAYERS) {
+            // wait for enough players in the race
+        }
+
         connection.sendStart();
 
         List<Map.Entry<String, LocalTime>> laps = new ArrayList<>();
@@ -36,9 +39,9 @@ public class Race {
 
         if (allLaps.size() == AMOUNT_OF_PLAYERS * AMOUNT_OF_LAPS) {
             connections.forEach(c -> c.sendResult(new ArrayList<>(laps)));
+            Server.getLeaderboard().addAll(allLaps);
             allLaps.clear();
             connections.clear();
         }
     }
-
 }
