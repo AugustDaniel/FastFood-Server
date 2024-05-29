@@ -58,10 +58,10 @@ public class Connection implements Runnable {
         }
     }
 
-    public Map.Entry<String, LocalTime> getLapTime() {
-        Map.Entry<String, LocalTime> lap = null;
+    public Lap getLapTime() {
+        Lap lap = null;
         try {
-            lap = (Map.Entry<String, LocalTime>) input.readObject();
+            lap = (Lap) input.readObject();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -80,7 +80,7 @@ public class Connection implements Runnable {
         }
     }
 
-    public void sendResult(List<Map.Entry<String, LocalTime>> laps) {
+    public void sendResult(List<Lap> laps) {
         try {
             output.writeObject(laps);
             output.flush();
