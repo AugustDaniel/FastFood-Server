@@ -2,7 +2,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public class Lap implements Serializable {
+public class Lap implements Serializable, Comparable<LocalTime> {
 
     private String name;
     private LocalTime lapTime;
@@ -24,5 +24,22 @@ public class Lap implements Serializable {
 
     public LocalDate getDateOfDrive() {
         return dateOfDrive;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setLapTime(LocalTime lapTime) {
+        this.lapTime = lapTime;
+    }
+
+    public void setDateOfDrive(LocalDate dateOfDrive) {
+        this.dateOfDrive = dateOfDrive;
+    }
+
+    @Override
+    public int compareTo(LocalTime o) {
+        return this.lapTime.compareTo(o);
     }
 }

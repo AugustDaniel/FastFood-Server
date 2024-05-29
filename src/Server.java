@@ -7,7 +7,7 @@ import java.util.concurrent.Executors;
 public class Server {
 
     private static ServerSocket serverSocket;
-    private static Set<Lap> leaderboard = new LinkedHashSet<>();
+    private static Set<Lap> leaderboard = new TreeSet<>();
 
     public static void main(String[] args) {
         try {
