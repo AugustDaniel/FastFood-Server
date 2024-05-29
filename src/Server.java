@@ -1,9 +1,6 @@
 import java.net.ServerSocket;
 import java.time.LocalTime;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -14,11 +11,13 @@ public class Server {
 
     public static void main(String[] args) {
         try {
-            serverSocket = new ServerSocket(8000);
+            serverSocket = new ServerSocket(55000);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+        leaderboard.add(new AbstractMap.SimpleEntry<>("test", LocalTime.now()));
+        leaderboard.add(new AbstractMap.SimpleEntry<>("test", LocalTime.now()));
         ExecutorService service = Executors.newCachedThreadPool();
 
         while (true) {
