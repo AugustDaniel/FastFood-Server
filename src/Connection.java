@@ -28,13 +28,13 @@ public class Connection implements Runnable {
         while (this.client.isConnected()) {
             try {
                 byte option = input.readByte();
-
+                System.out.println("got option" + option);
                 switch (option) {
                     case 0:
-                        sendLeaderBoard();
+                        startRace();
                         break;
                     case 1:
-                        startRace();
+                        sendLeaderBoard();
                         break;
                 }
             } catch (IOException e) {
@@ -44,6 +44,7 @@ public class Connection implements Runnable {
     }
 
     private void startRace() {
+        System.out.println("race started");
         Race.join(this);
     }
 
@@ -68,10 +69,12 @@ public class Connection implements Runnable {
     }
 
     public void sendStart() {
+        System.out.println("sending start");
         try {
             output.writeBoolean(true);
             output.flush();
             output.reset();
+            System.out.println("sent start");
         } catch (Exception e) {
             e.printStackTrace();
         }

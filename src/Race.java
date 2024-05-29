@@ -8,20 +8,23 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class Race {
 
     public static final int AMOUNT_OF_PLAYERS = 2;
-    public static final int AMOUNT_OF_LAPS = 3;
+    public static final int AMOUNT_OF_LAPS = 0;
     private static final ArrayBlockingQueue<Connection> connections = new ArrayBlockingQueue<>(AMOUNT_OF_PLAYERS);
     private static final ConcurrentLinkedQueue<Map.Entry<String, LocalTime>> allLaps = new ConcurrentLinkedQueue<>();
 
     public static void join(Connection connection) {
         try {
+            System.out.println("waiting");
             connections.put(connection);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+        System.out.println("waiting");
         while (connections.size() == AMOUNT_OF_PLAYERS) {
             // wait for enough players in the race
         }
+
 
         connection.sendStart();
 
@@ -31,6 +34,7 @@ public class Race {
             laps.add(connection.getLapTime());
         }
 
+        System.out.println("going to add laps");
         addLaps(laps);
     }
 
@@ -38,6 +42,7 @@ public class Race {
         allLaps.addAll(laps);
 
         if (allLaps.size() == AMOUNT_OF_PLAYERS * AMOUNT_OF_LAPS) {
+            System.out.println("sending laps");
             connections.forEach(c -> c.sendResult(new ArrayList<>(laps)));
             Server.getLeaderboard().addAll(allLaps);
             allLaps.clear();
