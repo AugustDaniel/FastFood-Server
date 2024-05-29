@@ -31,7 +31,7 @@ public class Connection implements Runnable {
 
                 switch (option) {
                     case 0:
-                        sendLeanderBoard();
+                        sendLeaderBoard();
                         break;
                     case 1:
                         startRace();
@@ -47,7 +47,7 @@ public class Connection implements Runnable {
         Race.join(this);
     }
 
-    private void sendLeanderBoard() {
+    private void sendLeaderBoard() {
         try {
             output.writeObject(Server.getLeaderboard());
             output.flush();
