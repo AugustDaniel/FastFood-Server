@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CountDownLatch;
 
 public class Race {
 
@@ -11,20 +12,19 @@ public class Race {
     public static final int AMOUNT_OF_LAPS = 0;
     private static final ArrayBlockingQueue<Connection> connections = new ArrayBlockingQueue<>(AMOUNT_OF_PLAYERS);
     private static final ConcurrentLinkedQueue<Map.Entry<String, LocalTime>> allLaps = new ConcurrentLinkedQueue<>();
+    private static CountDownLatch waiter = new CountDownLatch(AMOUNT_OF_PLAYERS);
 
     public static void join(Connection connection) {
         try {
-            System.out.println("waiting");
             connections.put(connection);
+            System.out.println("waiting");
+            waiter.countDown();
+            waiter.await();
+            waiter = new CountDownLatch(AMOUNT_OF_PLAYERS);
+            System.out.println("done waiting");
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        System.out.println("waiting");
-        while (connections.size() == AMOUNT_OF_PLAYERS) {
-            // wait for enough players in the race
-        }
-
 
         connection.sendStart();
 

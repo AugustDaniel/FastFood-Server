@@ -11,7 +11,7 @@ public class Server {
 
     public static void main(String[] args) {
         try {
-            serverSocket = new ServerSocket(55000);
+            serverSocket = new ServerSocket(8000);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -84,7 +84,6 @@ public class Connection implements Runnable {
         try {
             output.writeObject(laps);
             output.flush();
-            output.reset();
         } catch (Exception e) {
             e.printStackTrace();
         }
