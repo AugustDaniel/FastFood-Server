@@ -77,6 +77,13 @@ public class Connection implements Runnable {
         System.out.println("sent start");
     }
 
+    public void sendWait() throws Exception {
+        output.writeBoolean(false);
+        output.flush();
+        output.reset();
+        System.out.println("sent wait");
+    }
+
     public void checkStart() throws Exception {
         output.writeObject(Options.START_RACE);
         output.flush();

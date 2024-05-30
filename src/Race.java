@@ -33,8 +33,10 @@ public class Race {
 
             if (waiter.getCount() == 0) {
                 connection.sendStart();
+                break;
             }
-            break;
+
+            connection.sendWait();
         }
 
         RaceTracker.raceTracker.start();
