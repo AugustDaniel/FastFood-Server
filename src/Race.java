@@ -64,7 +64,7 @@ public class Race {
     public static void endRace() {
         System.out.println("sending laps");
         connections.forEach(c -> c.sendResult(new ArrayList<>(allLaps)));
-        Set<Lap> serverleaderboard = Server.getLeaderboard();
+        List<Lap> serverleaderboard = Server.getLeaderboard();
         serverleaderboard.addAll(allLaps);
         allLaps.clear();
         connections.clear();

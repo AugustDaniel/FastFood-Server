@@ -55,6 +55,7 @@ public class Connection implements Runnable {
     }
 
     private void sendLeaderBoard() throws Exception {
+        System.out.println(Server.getLeaderboard().toString());
         output.writeObject(Server.getLeaderboard());
         output.flush();
         output.reset();
