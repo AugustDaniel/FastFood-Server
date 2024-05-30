@@ -1,7 +1,10 @@
+import com.fastfoodlib.util.Lap;
+
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
@@ -46,7 +49,8 @@ public class Race {
         if (allLaps.size() == AMOUNT_OF_PLAYERS * AMOUNT_OF_LAPS) {
             System.out.println("sending laps");
             connections.forEach(c -> c.sendResult(new ArrayList<>(laps)));
-            Server.getLeaderboard().addAll(allLaps);
+            Set<Lap> serverleaderboard = Server.getLeaderboard();
+            serverleaderboard.addAll(allLaps);
             allLaps.clear();
             connections.clear();
         }
