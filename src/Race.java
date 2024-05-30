@@ -1,16 +1,16 @@
 import com.fastfoodlib.util.Lap;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
+import java.util.stream.Collectors;
 
 public class Race {
 
-    public static final int AMOUNT_OF_PLAYERS = 1;
+    public static final int AMOUNT_OF_PLAYERS = 2;
     public static final int AMOUNT_OF_LAPS = 1;
     private static final ArrayBlockingQueue<Connection> connections = new ArrayBlockingQueue<>(AMOUNT_OF_PLAYERS);
     private static final ConcurrentLinkedQueue<Lap> allLaps = new ConcurrentLinkedQueue<>();
@@ -23,6 +23,7 @@ public class Race {
         while (true) {
             waiter.countDown();
             waiter.await();
+
             try {
                 connection.checkStart();
             } catch (Exception e) {
@@ -62,7 +63,7 @@ public class Race {
 
     public static void endRace() {
         System.out.println("sending laps");
-        connections.forEach(c -> c.sendResult(new ArrayList<>()));
+        connections.forEach(c -> c.sendResult(new ArrayList<>(allLaps)));
         Set<Lap> serverleaderboard = Server.getLeaderboard();
         serverleaderboard.addAll(allLaps);
         allLaps.clear();

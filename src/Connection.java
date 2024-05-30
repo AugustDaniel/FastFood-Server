@@ -85,6 +85,7 @@ public class Connection implements Runnable {
     }
 
     public void checkStart() throws Exception {
+        System.out.println("checking start");
         output.writeObject(Options.START_RACE);
         output.flush();
 
