@@ -1,3 +1,4 @@
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -25,37 +26,38 @@ public class Connection implements Runnable {
 
     @Override
     public void run() {
-        while (this.client.isConnected()) {
+        while (true) {
             try {
-                byte option = input.readByte();
+                Options option = (Options) input.readObject();
                 System.out.println("got option" + option);
                 switch (option) {
-                    case 0:
-                        startRace();
+                    case JOIN_RACE:
+                        joinRace();
                         break;
-                    case 1:
+                    case REQUEST_LEADERBOARD:
                         sendLeaderBoard();
                         break;
+                    default:
+                        output.writeBoolean(false);
                 }
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
+                break;
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
 
-    private void startRace() {
-        System.out.println("race started");
+    private void joinRace() throws Exception {
+        System.out.println("race joined");
         Race.join(this);
     }
 
-    private void sendLeaderBoard() {
-        try {
-            output.writeObject(Server.getLeaderboard());
-            output.flush();
-            output.reset();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private void sendLeaderBoard() throws Exception {
+        output.writeObject(Server.getLeaderboard());
+        output.flush();
+        output.reset();
     }
 
     public Lap getLapTime() {
@@ -68,15 +70,20 @@ public class Connection implements Runnable {
         return lap;
     }
 
-    public void sendStart() {
-        System.out.println("sending start");
-        try {
-            output.writeBoolean(true);
-            output.flush();
-            output.reset();
-            System.out.println("sent start");
-        } catch (Exception e) {
-            e.printStackTrace();
+    public void sendStart() throws Exception {
+        output.writeBoolean(true);
+        output.flush();
+        output.reset();
+        System.out.println("sent start");
+    }
+
+    public void checkStart() throws Exception {
+        output.writeObject(Options.START_RACE);
+        output.flush();
+
+        Options option = (Options) input.readObject();
+        if (option != Options.START_RACE) {
+            throw new EOFException();
         }
     }
 
@@ -84,8 +91,8 @@ public class Connection implements Runnable {
         try {
             output.writeObject(laps);
             output.flush();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }
