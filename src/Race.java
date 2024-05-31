@@ -12,6 +12,7 @@ public class Race {
 
     public static final int AMOUNT_OF_PLAYERS = 2;
     public static final int AMOUNT_OF_LAPS = 1;
+    private static final RaceTracker tracker = new RaceTracker();
     private static final ArrayBlockingQueue<Connection> connections = new ArrayBlockingQueue<>(AMOUNT_OF_PLAYERS);
     private static final ConcurrentLinkedQueue<Lap> allLaps = new ConcurrentLinkedQueue<>();
     private static CountDownLatch waiter = new CountDownLatch(AMOUNT_OF_PLAYERS);
@@ -40,7 +41,7 @@ public class Race {
             connection.sendWait();
         }
 
-        RaceTracker.raceTracker.start();
+        tracker.start();
         List<Lap> laps = new ArrayList<>();
 
         for (int i = 0; i < AMOUNT_OF_LAPS; i++) {
@@ -68,6 +69,6 @@ public class Race {
         serverleaderboard.addAll(allLaps);
         allLaps.clear();
         connections.clear();
-        RaceTracker.raceTracker.end();
+        tracker.end();
     }
 }

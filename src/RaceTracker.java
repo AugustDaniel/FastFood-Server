@@ -4,13 +4,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class RaceTracker {
 
-    public static final RaceTracker raceTracker = new RaceTracker();
-
     public AtomicBoolean inProgress = new AtomicBoolean(false);
     private Timer timer = new Timer();
-
-    private RaceTracker() {
-    }
 
     public void start() {
         if (inProgress.get()) {
