@@ -1,6 +1,9 @@
 import com.fastfoodlib.util.Lap;
 
+import java.io.*;
 import java.net.ServerSocket;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
@@ -10,7 +13,8 @@ import java.util.concurrent.Executors;
 public class Server {
 
     private static ServerSocket serverSocket;
-    private static List<Lap> leaderboard = new ArrayList<>();
+    private static List<Lap> leaderboard = null;
+    private static final String PATH_LEADERBOARD = "leaderboard.dat";
 
     public static void main(String[] args) {
         try {
@@ -19,14 +23,15 @@ public class Server {
             e.printStackTrace();
         }
 
-        ExecutorService service = Executors.newCachedThreadPool();
-        leaderboard.add(new Lap("Pieter", LocalTime.now(), LocalDate.now()));
-        leaderboard.add(new Lap("Jayson", LocalTime.now(), LocalDate.now()));
-        leaderboard.add(new Lap("Joshua", LocalTime.now(), LocalDate.now()));
-        leaderboard.add(new Lap("Tim", LocalTime.now(), LocalDate.now()));
-        leaderboard.add(new Lap("Luuk", LocalTime.now(), LocalDate.now()));
-        leaderboard.add(new Lap("Erik", LocalTime.now(), LocalDate.now()));
+        try (FileInputStream fileInputStream = new FileInputStream(PATH_LEADERBOARD);
+             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)) {
+            leaderboard = (List<Lap>) objectInputStream.readObject();
+        } catch (Exception ex) {
+            leaderboard = new ArrayList<>();
+            ex.getMessage();
+        }
 
+        ExecutorService service = Executors.newCachedThreadPool();
         while (true) {
             try {
                 service.execute(new Connection(serverSocket.accept()));
@@ -37,6 +42,17 @@ public class Server {
     }
 
     public static List<Lap> getLeaderboard() {
-        return leaderboard;
+        return new ArrayList<>(leaderboard);
+    }
+
+    public static synchronized void addToLeaderboard(List<Lap> laps) {
+        leaderboard.addAll(laps);
+
+        try (FileOutputStream fileOutputStream = new FileOutputStream(PATH_LEADERBOARD);
+             ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream)) {
+            objectOutputStream.writeObject(leaderboard);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 }
