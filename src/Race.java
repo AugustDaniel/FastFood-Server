@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 public class Race {
 
-    public static final int AMOUNT_OF_PLAYERS = 1;
+    public static final int AMOUNT_OF_PLAYERS = 2;
     public static final int AMOUNT_OF_LAPS = 3;
     private static final RaceTracker tracker = new RaceTracker();
     private static final ArrayBlockingQueue<Connection> connections = new ArrayBlockingQueue<>(AMOUNT_OF_PLAYERS);
