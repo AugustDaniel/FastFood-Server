@@ -29,7 +29,7 @@ public class Connection implements Runnable {
         while (true) {
             try {
                 Options option = (Options) input.readObject();
-                System.out.println("got option" + option);
+                Server.printLog("got option " + option.toString());
                 switch (option) {
                     case JOIN_RACE:
                         joinRace();
@@ -50,12 +50,12 @@ public class Connection implements Runnable {
     }
 
     private void joinRace() throws Exception {
-        System.out.println("race joined");
+        Server.printLog("joined race");
         Race.join(this);
     }
 
     private void sendLeaderBoard() throws Exception {
-        System.out.println(Server.getLeaderboard().toString());
+        Server.printLog(Server.getLeaderboard().toString());
         output.writeObject(Server.getLeaderboard());
         output.flush();
         output.reset();
@@ -75,18 +75,18 @@ public class Connection implements Runnable {
         output.writeBoolean(true);
         output.flush();
         output.reset();
-        System.out.println("sent start");
+        Server.printLog("send start");
     }
 
     public void sendWait() throws Exception {
         output.writeBoolean(false);
         output.flush();
         output.reset();
-        System.out.println("sent wait");
+        Server.printLog("send wait");
     }
 
     public void checkStart() throws Exception {
-        System.out.println("checking start");
+        Server.printLog("checking start");
         output.writeObject(Options.START_RACE);
         output.flush();
 
