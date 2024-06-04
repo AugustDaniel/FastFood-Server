@@ -49,9 +49,7 @@ public class Race {
             laps.add(connection.getLapTime());
         }
 
-        System.out.println(laps);
-        System.out.println("going to add laps");
-
+        Server.printLog("sending laps");
         addLaps(laps);
     }
 
@@ -65,7 +63,7 @@ public class Race {
     }
 
     public static void endRace() {
-        System.out.println("sending laps");
+        Server.printLog("sending results");
         connections.forEach(c -> c.sendResult(new ArrayList<>(allLaps)));
         Server.addToLeaderboard(new ArrayList<>(allLaps));
         allLaps.clear();

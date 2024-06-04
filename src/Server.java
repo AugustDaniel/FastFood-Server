@@ -55,4 +55,8 @@ public class Server {
             ex.printStackTrace();
         }
     }
+
+    public static void printLog(String message) {
+        System.out.println(LocalTime.now() + ": " + message);
+    }
 }
