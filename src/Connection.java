@@ -40,7 +40,7 @@ public class Connection implements Runnable {
                     default:
                         output.writeBoolean(false);
                 }
-            } catch (IOException e) {
+            } catch (IOException | NullPointerException e) {
                 e.printStackTrace();
                 break;
             } catch (Exception e) {
