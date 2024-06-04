@@ -1,6 +1,7 @@
 import com.fastfoodlib.util.Lap;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -55,9 +56,10 @@ public class Race {
     }
 
     private static void addLaps(List<Lap> laps) {
-        allLaps.addAll(laps);
+        Collections.sort(laps);
+        allLaps.add(laps.get(0));
 
-        if (allLaps.size() == AMOUNT_OF_PLAYERS * AMOUNT_OF_LAPS) {
+        if (allLaps.size() == AMOUNT_OF_PLAYERS) {
             endRace();
         }
     }
