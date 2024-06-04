@@ -22,7 +22,7 @@ public class RaceTracker {
                     end();
                 }
             }
-        }, 30000);
+        }, 180000);
     }
 
     public void end() {
