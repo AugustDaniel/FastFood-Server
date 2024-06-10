@@ -9,8 +9,8 @@ import java.util.concurrent.CountDownLatch;
 
 public class Race {
 
-    private static final int AMOUNT_OF_PLAYERS = 1;
-    private static final int AMOUNT_OF_LAPS = 1;
+    private static final int AMOUNT_OF_PLAYERS = 2;
+    private static final int AMOUNT_OF_LAPS = 3;
     private static final RaceTracker tracker = new RaceTracker();
     private static final ArrayBlockingQueue<Connection> connections = new ArrayBlockingQueue<>(AMOUNT_OF_PLAYERS);
     private static final ConcurrentLinkedQueue<Lap> allLaps = new ConcurrentLinkedQueue<>();
@@ -47,7 +47,7 @@ public class Race {
             laps.add(connection.getLapTime());
         }
 
-        Server.printLog("sending laps");
+
         addLaps(laps);
     }
 
@@ -58,14 +58,31 @@ public class Race {
         if (allLaps.size() == AMOUNT_OF_PLAYERS) {
             endRace();
         }
+
+        Server.printLog("sending laps");
     }
 
     public static void endRace() {
         Server.printLog("sending results");
-        connections.forEach(c -> c.sendResult(new ArrayList<>(allLaps)));
+        connections.forEach(c -> {
+            c.sendResult(new ArrayList<>(allLaps));
+            c.disconnect();
+        });
         Server.addToLeaderboard(new ArrayList<>(allLaps));
         allLaps.clear();
         connections.clear();
         tracker.end();
     }
+
+    public static void endRacePre() {
+        connections.forEach(c -> {
+            try {
+                c.sendStart();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+        endRace();
+    }
+
 }

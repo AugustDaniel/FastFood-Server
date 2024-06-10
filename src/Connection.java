@@ -49,6 +49,19 @@ public class Connection implements Runnable {
         }
     }
 
+    public void disconnect() {
+        try {
+            if (client != null) client.close();
+            if (input != null) input.close();
+            if (output != null) output.close();
+            input = null;
+            output = null;
+            client = null;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private void joinRace() throws Exception {
         Server.printLog("joined race");
         Race.join(this);

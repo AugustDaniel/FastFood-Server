@@ -18,11 +18,11 @@ public class RaceTracker {
             @Override
             public void run() {
                 if (inProgress.get()) {
-                    Race.endRace();
+                    Race.endRacePre();
                     end();
                 }
             }
-        }, 180000);
+        }, 30000);
     }
 
     public void end() {
