@@ -9,8 +9,8 @@ import java.util.concurrent.CountDownLatch;
 
 public class Race {
 
-    private static final int AMOUNT_OF_PLAYERS = 2;
-    private static final int AMOUNT_OF_LAPS = 3;
+    private static final int AMOUNT_OF_PLAYERS = 1;
+    private static final int AMOUNT_OF_LAPS = 1;
     private static final RaceTracker tracker = new RaceTracker();
     private static final ArrayBlockingQueue<Connection> connections = new ArrayBlockingQueue<>(AMOUNT_OF_PLAYERS);
     private static final ConcurrentLinkedQueue<Lap> allLaps = new ConcurrentLinkedQueue<>();
@@ -33,7 +33,6 @@ public class Race {
 
             if (waiter.getCount() == 0) {
                 connection.sendStart();
-                connection.sendPlayers(AMOUNT_OF_PLAYERS);
                 break;
             }
 
@@ -44,22 +43,24 @@ public class Race {
         List<Lap> laps = new ArrayList<>();
 
         for (int i = 0; i < AMOUNT_OF_LAPS; i++) {
-            laps.add(connection.getLapTime());
+            Lap lap = connection.getLapTime();
+            laps.add(lap);
+            Server.printLog("lap received: " + lap.getLapTimeFormatted());
         }
 
 
-        addLaps(laps);
+        addLaps(connection, laps);
     }
 
-    private static void addLaps(List<Lap> laps) {
+    private static void addLaps(Connection connection, List<Lap> laps) throws Exception {
+        Server.printLog("adding laps " + laps);
         Collections.sort(laps);
         allLaps.add(laps.get(0));
+        connection.sendTimeout(); // end race for them
 
         if (allLaps.size() == AMOUNT_OF_PLAYERS) {
             endRace();
         }
-
-        Server.printLog("sending laps");
     }
 
     public static void endRace() {
@@ -77,12 +78,13 @@ public class Race {
     public static void endRacePre() {
         connections.forEach(c -> {
             try {
-                c.sendStart();
+                if (c.racing.get()) {
+                    c.sendTimeout();
+                }
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         });
         endRace();
     }
-
 }

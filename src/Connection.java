@@ -4,6 +4,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.fastfoodlib.util.*;
 
@@ -12,6 +13,7 @@ public class Connection implements Runnable {
     private Socket client;
     private ObjectInputStream input;
     private ObjectOutputStream output;
+    public AtomicBoolean racing = new AtomicBoolean(false);
 
     public Connection(Socket client) {
         this.client = client;
@@ -54,9 +56,6 @@ public class Connection implements Runnable {
             if (client != null) client.close();
             if (input != null) input.close();
             if (output != null) output.close();
-            input = null;
-            output = null;
-            client = null;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -74,20 +73,15 @@ public class Connection implements Runnable {
         output.reset();
     }
 
-    public Lap getLapTime() {
-        Lap lap = null;
-        try {
-            lap = (Lap) input.readObject();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return lap;
+    public Lap getLapTime() throws IOException, ClassNotFoundException {
+        return (Lap) input.readObject();
     }
 
     public void sendStart() throws Exception {
         output.writeBoolean(true);
         output.flush();
         output.reset();
+        racing.set(true);
         Server.printLog("send start");
     }
 
@@ -118,10 +112,11 @@ public class Connection implements Runnable {
         }
     }
 
-    public void sendPlayers(int amountOfPlayers) throws Exception{
-        output.writeInt(amountOfPlayers);
+    public void sendTimeout() throws IOException {
+        output.writeBoolean(true);
         output.flush();
         output.reset();
-        Server.printLog("sent amount of players");
+        racing.set(false);
+        Server.printLog("sent timeout");
     }
 }
