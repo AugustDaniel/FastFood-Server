@@ -9,13 +9,12 @@ import java.util.concurrent.CountDownLatch;
 
 public class Race {
 
-    public static final int AMOUNT_OF_PLAYERS = 2;
-    public static final int AMOUNT_OF_LAPS = 3;
+    private static final int AMOUNT_OF_PLAYERS = 1;
+    private static final int AMOUNT_OF_LAPS = 1;
     private static final RaceTracker tracker = new RaceTracker();
     private static final ArrayBlockingQueue<Connection> connections = new ArrayBlockingQueue<>(AMOUNT_OF_PLAYERS);
     private static final ConcurrentLinkedQueue<Lap> allLaps = new ConcurrentLinkedQueue<>();
     private static CountDownLatch waiter = new CountDownLatch(AMOUNT_OF_PLAYERS);
-
 
     public static void join(Connection connection) throws Exception {
         connections.put(connection);
@@ -34,6 +33,7 @@ public class Race {
 
             if (waiter.getCount() == 0) {
                 connection.sendStart();
+                connection.sendPlayers(AMOUNT_OF_PLAYERS);
                 break;
             }
 

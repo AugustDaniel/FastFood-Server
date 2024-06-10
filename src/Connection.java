@@ -104,4 +104,11 @@ public class Connection implements Runnable {
             throw new RuntimeException(e);
         }
     }
+
+    public void sendPlayers(int amountOfPlayers) throws Exception{
+        output.writeInt(amountOfPlayers);
+        output.flush();
+        output.reset();
+        Server.printLog("sent amount of players");
+    }
 }
