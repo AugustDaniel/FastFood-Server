@@ -12,12 +12,13 @@ public class Race {
     private static final int AMOUNT_OF_PLAYERS = 1;
     private static final int AMOUNT_OF_LAPS = 1;
     private static final RaceTracker tracker = new RaceTracker();
-    private static final ArrayBlockingQueue<Connection> connections = new ArrayBlockingQueue<>(AMOUNT_OF_PLAYERS);
-    private static final ConcurrentLinkedQueue<Lap> allLaps = new ConcurrentLinkedQueue<>();
+    private static volatile ArrayBlockingQueue<Connection> connections = new ArrayBlockingQueue<>(AMOUNT_OF_PLAYERS);
+    private static volatile ConcurrentLinkedQueue<Lap> allLaps = new ConcurrentLinkedQueue<>();
     private static CountDownLatch waiter = new CountDownLatch(AMOUNT_OF_PLAYERS);
 
     public static void join(Connection connection) throws Exception {
         Server.printLog("players waiting for race: " + connection.toString());
+        Server.printLog("in connection list: " + connections.toString());
         connections.put(connection);
         Server.printLog("player added to waiting list + " + connection.toString());
 
@@ -50,7 +51,7 @@ public class Race {
             Server.printLog("lap received: " + lap.getLapTimeFormatted());
         }
 
-
+;
         addLaps(connection, laps);
     }
 

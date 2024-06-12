@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class RaceTracker {
 
     public AtomicBoolean inProgress = new AtomicBoolean(false);
-    private Timer timer = new Timer();
+    private volatile Timer timer = new Timer();
 
     public void start() {
         if (inProgress.get()) {
@@ -14,12 +14,13 @@ public class RaceTracker {
 
         inProgress.set(true);
 
+        timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 if (inProgress.get()) {
                     Race.endRacePre();
-                    end();
+                    inProgress.set(false);
                 }
             }
         }, 30000);
@@ -27,5 +28,6 @@ public class RaceTracker {
 
     public void end() {
         inProgress.set(false);
+        timer.cancel();
     }
 }
