@@ -23,7 +23,7 @@ public class RaceTracker {
                     inProgress.set(false);
                 }
             }
-        }, 30000);
+        }, 180000);
     }
 
     public void end() {
