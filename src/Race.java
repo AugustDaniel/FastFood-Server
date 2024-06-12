@@ -17,7 +17,9 @@ public class Race {
     private static CountDownLatch waiter = new CountDownLatch(AMOUNT_OF_PLAYERS);
 
     public static void join(Connection connection) throws Exception {
+        Server.printLog("players waiting for race: " + connection.toString());
         connections.put(connection);
+        Server.printLog("player added to waiting list + " + connection.toString());
 
         while (true) {
             waiter.countDown();
