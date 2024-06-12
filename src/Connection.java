@@ -66,11 +66,21 @@ public class Connection implements Runnable {
         Race.join(this);
     }
 
-    private void sendLeaderBoard() throws Exception {
-        Server.printLog(Server.getLeaderboard().toString());
-        output.writeObject(Server.getLeaderboard());
+    private void writeObject(Object o) throws IOException {
+        output.writeObject(o);
         output.flush();
         output.reset();
+    }
+
+    private void writeBoolean(boolean bool) throws IOException {
+        output.writeBoolean(bool);
+        output.flush();
+        output.reset();
+    }
+
+    private void sendLeaderBoard() throws Exception {
+        Server.printLog(Server.getLeaderboard().toString());
+        writeObject(Server.getLeaderboard());
     }
 
     public Lap getLapTime() throws IOException, ClassNotFoundException {
@@ -78,24 +88,19 @@ public class Connection implements Runnable {
     }
 
     public void sendStart() throws Exception {
-        output.writeBoolean(true);
-        output.flush();
-        output.reset();
+        writeBoolean(true);
         racing.set(true);
         Server.printLog("send start");
     }
 
     public void sendWait() throws Exception {
-        output.writeBoolean(false);
-        output.flush();
-        output.reset();
+        writeBoolean(false);
         Server.printLog("send wait");
     }
 
     public void checkStart() throws Exception {
         Server.printLog("checking start");
-        output.writeObject(Options.START_RACE);
-        output.flush();
+        writeObject(Options.START_RACE);
 
         Options option = (Options) input.readObject();
         if (option != Options.START_RACE) {
@@ -105,17 +110,14 @@ public class Connection implements Runnable {
 
     public void sendResult(List<Lap> laps) {
         try {
-            output.writeObject(laps);
-            output.flush();
+            writeObject(laps);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     public void sendTimeout() throws IOException {
-        output.writeBoolean(true);
-        output.flush();
-        output.reset();
+        writeBoolean(true);
         racing.set(false);
         Server.printLog("sent timeout");
     }

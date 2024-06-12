@@ -11,7 +11,7 @@ public class Server {
 
     private static ServerSocket serverSocket;
     private static List<Lap> leaderboard = null;
-    private static final String PATH_LEADERBOARD = "leaderboard.dat";
+    private static final String leaderboardPath = "leaderboard.dat";
 
     public static void main(String[] args) {
         try {
@@ -20,7 +20,7 @@ public class Server {
             e.printStackTrace();
         }
 
-        try (FileInputStream fileInputStream = new FileInputStream(PATH_LEADERBOARD);
+        try (FileInputStream fileInputStream = new FileInputStream(leaderboardPath);
              ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)) {
             leaderboard = (List<Lap>) objectInputStream.readObject();
         } catch (Exception ex) {
@@ -45,7 +45,7 @@ public class Server {
     public static synchronized void addToLeaderboard(List<Lap> laps) {
         leaderboard.addAll(laps);
 
-        try (FileOutputStream fileOutputStream = new FileOutputStream(PATH_LEADERBOARD);
+        try (FileOutputStream fileOutputStream = new FileOutputStream(leaderboardPath);
              ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream)) {
             objectOutputStream.writeObject(leaderboard);
         } catch (Exception ex) {

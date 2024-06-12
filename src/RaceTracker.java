@@ -19,7 +19,7 @@ public class RaceTracker {
             @Override
             public void run() {
                 if (inProgress.get()) {
-                    Race.endRacePre();
+                    Race.endRacePrematurely();
                     inProgress.set(false);
                 }
             }
